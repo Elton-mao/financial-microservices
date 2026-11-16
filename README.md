@@ -17,26 +17,59 @@ A aplicação tem como objetivo simular um fluxo de processamento de pagamentos,
 
 ## Arquitetura
 
-```text
-                    CLIENTE
-                       |
-                       v
-                +-------------+
-                |    NGINX    |
-                | API GATEWAY |
-                +-------------+
-                       |
-             +---------+---------+
-             |                   |
-             v                   v
-     +---------------+   +------------------+
-     | PAYMENT       |-->| PROCESSOR        |
-     | SERVICE       |   | SERVICE          |
-     +---------------+   +------------------+
-             |                   |
-             v                   v
-        PostgreSQL          PostgreSQL
-```
+
+                         CLIENTE
+                            |
+                            v
+                     +-------------+
+                     |    NGINX    |
+                     | API GATEWAY |
+                     +-------------+
+                            |
+                            v
+                   +------------------+
+                   | PAYMENT SERVICE  |
+                   +------------------+
+                            |
+                       +---------+
+                       | RabbitMQ|
+                       | EXCHANGE|
+                       +---------+
+                            |
+                  +---------+---------+
+                  |                   |
+                  v                   v
+          +----------------+  +----------------+
+          | PAYMENT        |  | PROCESSOR      |
+          | QUEUE          |  | SERVICE        |
+          +----------------+  +----------------+
+                                      |
+                                      v
+                              +-------------+
+                              | PostgreSQL  |
+                              +-------------+
+
+                   PROCESSOR SERVICE
+                            |
+                            v
+                       +---------+
+                       | RabbitMQ|
+                       | EXCHANGE|
+                       +---------+
+                            |
+                            v
+                   +------------------+
+                   | PAYMENT RESULT   |
+                   | QUEUE            |
+                   +------------------+
+                            |
+                            v
+                   +------------------+
+                   | PAYMENT SERVICE  |
+                   +------------------+
+                            |
+                            v
+                      PostgreSQL
 
 ## Tecnologias
 
